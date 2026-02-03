@@ -10,29 +10,19 @@ class ChatController extends Controller
 {
     public function enviarMensaje(Request $request)
     {
-        // validamos que el mensaje no venga vacío
-        $request->validate([
-            'mensaje' => 'required|string',
-            'id_depab' => 'required|integer'
-        ]);
-
-        // guardamos el mensaje en la base de datos 
-        
-       $nuevoMensaje = Mensaje::create([
+        // 1. Guardar en Postgres
+        $nuevoMensaje = Mensaje::create([
             'remitente'    => $request->remitente,
             'destinatario' => $request->destinatario,
-            'id_depaa'     => $request->id_depaa, 
+            'id_depaa'     => $request->id_depaa,
             'id_depab'     => $request->id_depab,
             'mensaje'      => $request->mensaje,
             'fecha'        => now(),
         ]);
 
-        // dispara el evento para que reverb lo anuncie
+        // 2. Disparar a Reverb
         broadcast(new NuevoMensajeEnviado($nuevoMensaje))->toOthers();
 
-        return response()->json([
-            'status' => 'Mensaje enviado y transmitido',
-            'datos'  => $nuevoMensaje
-        ]);
+        return response()->json($nuevoMensaje);
     }
 }

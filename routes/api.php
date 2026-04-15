@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotificacionController;
-
+use App\Http\Controllers\AuthController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,3 +22,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/enviar-mensaje', [ChatController::class, 'enviarMensaje']);
 
 Route::post('/notificar', [NotificacionController::class, 'enviarAlerta']);
+
+// Agrupamos las rutas que requieren que el usuario haya iniciado sesión
+Route::middleware('auth:sanctum')->group(function () {
+    
+    // Ruta para cambiar la contraseña
+    Route::post('/cambiar-password', [AuthController::class, 'cambiarPassword']);
+    
+});
